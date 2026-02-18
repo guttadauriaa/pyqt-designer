@@ -71,10 +71,25 @@ class MonApplication(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         self.ui.first.clicked.connect(self.on_first_click)
+        self.ui.second.clicked.connect(self.on_second_click)
+        self.ui.third.clicked.connect(self.on_third_click)
+        self.ui.fourth.clicked.connect(self.on_fourth_click)
 
     def on_first_click(self):
         print("Bouton first cliqué !")
-        self.ui.label.setText("Le bouton a été actionné !")
+        self.ui.label.setText("Preums !")
+
+    def on_second_click(self):
+        print("Bouton second cliqué !")
+        self.ui.label.setText("Deuze !")
+
+    def on_third_click(self):
+        print("Bouton third cliqué !")
+        self.ui.label.setText("Troiz ! ou Treums ?")
+
+    def on_fourth_click(self):
+        print("Bouton fourth cliqué !")
+        self.ui.label.setText("Quatrez ??")
 
 
 if __name__ == "__main__":

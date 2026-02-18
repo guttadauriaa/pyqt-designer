@@ -60,6 +60,7 @@ class Ui_Dialog(object):
         self.buttonBox.rejected.connect(Dialog.reject) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
+
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
@@ -78,10 +79,27 @@ class MonApplication(QDialog):
 		self.ui.setupUi(self)
 		self.ui.pushButton.clicked.connect(self.on_first_click)
 
+		for cb in [self.ui.checkBox, self.ui.checkBox_2,
+		self.ui.checkBox_3, self.ui.checkBox_4]:
+		    cb.stateChanged.connect(self.check_all_and_uncheck)
+
 	def on_first_click(self):
 		print("Bouton pushButton cliqué !")
 		self.ui.pushButton.setText("Le bouton a été actionné !")
 		self.ui.pushButton.adjustSize()
+
+	def check_all_and_uncheck(self):
+	    checkboxes = [
+	        self.ui.checkBox,
+	        self.ui.checkBox_2,
+	        self.ui.checkBox_3,
+	        self.ui.checkBox_4
+	    ]
+
+	    if all(cb.isChecked() for cb in checkboxes):
+	        for cb in checkboxes:
+	            cb.setChecked(False)
+	        print("Toutes les cases étaient cochées, plus maintenant.")
 
 
 if __name__ == "__main__":
