@@ -1,13 +1,27 @@
 #!/bin/bash
 
-# --- Configuration de l'image ---
+# --- Configuration ---
 IMAGE_NAME="pyqt-designer:linux"
 CONTAINER_HOME="/home/$USER"
 LOCAL_DIR="$(pwd)"
 
+# --- Détection de SELinux ---
+# Sur Fedora, 'getenforce' renvoie 'Enforcing' ou 'Permissive'
+if command -v getenforce >/dev/null 2>&1 && [ "$(getenforce)" != "Disabled" ]; then
+    echo "--- SELinux détecté : Activation du flag :Z sur les volumes ---"
+    Z_OPT=",z"  # Utilisation d'une virgule pour les options combinées
+    Z_FLAG=":Z" # Pour les volumes simples
+    PRIV_OPT="--privileged"
+else
+    Z_OPT=""
+    Z_FLAG=""
+    PRIV_OPT=""
+fi
+
 # --- Initialisation des arguments Docker ---
 DOCKER_ARGS=(
     -it --rm
+    $PRIV_OPT                # Garantit l'accès aux pilotes graphiques et aux sockets
     --user "$(id -u):$(id -g)"
     -v "/etc/passwd:/etc/passwd:ro"
     -v "/etc/group:/etc/group:ro"
@@ -19,7 +33,7 @@ DOCKER_ARGS=(
 # --- Détection de l'environnement d'affichage ---
 
 if [ -n "$WAYLAND_DISPLAY" ]; then
-    echo "--- Détection : Wayland (Linux) ---"
+    echo "--- Mode : Wayland (Natif) ---"
     DOCKER_ARGS+=(
         -e WAYLAND_DISPLAY="$WAYLAND_DISPLAY"
         -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR"
@@ -36,8 +50,8 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
         -e QT_QPA_PLATFORM=xcb
     )
 elif [ -n "$DISPLAY" ]; then
-    echo "--- Détection : X11 (Linux ou Windows) ---"
-    # Autoriser Docker à accéder à X11
+    echo "--- Mode : X11 (via XWayland ou Natif) ---"
+    # Autoriser Docker à accéder au serveur X local
     xhost +local:docker > /dev/null
     
     # Si on est sur WSL ou Windows, DISPLAY contient souvent une IP ou :0
