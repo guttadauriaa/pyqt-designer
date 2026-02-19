@@ -22,6 +22,7 @@ Malgré tout, lorsque l'on utilise cv2.imshow() avec Wayland, il y a des adaptat
 Pour lancer ces exemples :
 
 ```bash
+$ ./run-designer.sh python exemples/imshow.py
 $ ./run-designer.sh python exemples/webcam-pyqt5.py
 ```
 
