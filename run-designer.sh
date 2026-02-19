@@ -41,6 +41,8 @@ if [ -n "$WAYLAND_DISPLAY" ]; then
         -e XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR"
         -v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
         -e QT_QPA_PLATFORM=wayland
+        -v /tmp/.X11-unix:/tmp/.X11-unix
+        -e DISPLAY="$DISPLAY"
         --privileged
     )
 elif [[ "$OSTYPE" == "darwin"* ]]; then
