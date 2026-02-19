@@ -28,6 +28,8 @@ DOCKER_ARGS=(
     -v "$LOCAL_DIR:$CONTAINER_HOME"
     -e HOME="$CONTAINER_HOME"
     -w "$CONTAINER_HOME"
+    --group-add $(getent group video | cut -d: -f3)
+    --device=/dev/video0:/dev/video0
 )
 
 # --- Détection de l'environnement d'affichage ---
