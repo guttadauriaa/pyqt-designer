@@ -21,6 +21,10 @@ RUN apt-get update && apt-get install -y \
     libxkbcommon-x11-0 \
     libxcb-cursor0 \
     libqt5gui5 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libopencv-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Installation des bibliothèques Python scientifiques
@@ -32,6 +36,11 @@ RUN pip install --no-cache-dir \
     scipy \
     scikit-learn \
     scikit-image
+    #opencv-python
+
+RUN apt-get update && apt-get install -y \
+    python3-opencv \
+    && rm -rf /var/lib/apt/lists/*
 
 # Configuration pour Wayland
 #ENV QT_QPA_PLATFORM=wayland  # pas si l'on veut l'utiliser avec X11
