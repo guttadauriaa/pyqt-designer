@@ -74,6 +74,7 @@ RUN apt-get update && apt-get install -y \
     libwayland-egl1 \
     libxkbcommon-x11-0 \
     libxcb-cursor0 \
+    libqt5core5 \
     libqt5gui5 \
     libqt5opengl5 \
     libqt5widgets5 \
@@ -93,7 +94,6 @@ RUN apt-get update && apt-get install -y \
     qttools5-dev-tools \
     qt5-qmake \
     pyqt5-dev-tools \
-    python3-pyqt5 \
     python3-pip \
     libgl1 \
     libglx-mesa0 \
@@ -132,6 +132,9 @@ RUN pip install --no-cache-dir \
 # Configuration pour Wayland
 #ENV QT_QPA_PLATFORM=wayland  # pas si l'on veut l'utiliser avec X11
 ENV XDG_RUNTIME_DIR=/tmp/runtime-dir
+
+# Pointer le PYTHONPATH pour trouver le fichier cv2*.so
+ENV PYTHONPATH=/usr/local/python3.11/site-packages:$PYTHONPATH
 
 WORKDIR /app
 
