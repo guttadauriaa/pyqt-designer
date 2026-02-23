@@ -1,17 +1,6 @@
 # Build stage
 FROM python:3.11-slim AS builder
 
-# Install build dependencies
-#RUN apt-get update && apt-get install -y --no-install-recommends \
-    # libatlas-base-dev is in the universe repo with ubuntu images
-    #software-properties-common && \
-    #add-apt-repository universe && \
-    #apt-get update && \
-    #apt-get install -y --no-install-recommends \
-    #libatlas-base-dev \
-    # end of libatlas-base-dev requirement
-    # for debian 13, you must add -D WITH_TBB=OFF -D WITH_OPENBLAS=ON
-    # to the opencv build configuration
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential cmake git pkg-config libgtk-3-dev \
     libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
@@ -35,12 +24,12 @@ RUN git clone --branch ${OPENCV_VERSION} --depth 1 https://github.com/opencv/ope
 RUN mkdir -p opencv/build && \
     cd opencv/build && \
     cmake -D CMAKE_BUILD_TYPE=RELEASE \
-          -D CMAKE_INSTALL_PREFIX=/opt/opencv/install \
+          -D CMAKE_INSTALL_PREFIX=/usr/local \
           -D OPENCV_ENABLE_NONFREE=ON \
           -D OPENCV_EXTRA_MODULES_PATH=/opt/opencv/opencv_contrib/modules \
           -D PYTHON3_EXECUTABLE=$(which python3) \
           -D PYTHON3_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
-          -D PYTHON3_PACKAGES_PATH=/opt/opencv/install/lib/python3.11/site-packages \
+          -D PYTHON3_PACKAGES_PATH=/usr/local/lib/python3.11/site-packages \
           -D BUILD_opencv_python3=ON \
           -D WITH_QT=ON \
           -D WITH_OPENGL=ON \
@@ -57,6 +46,16 @@ RUN mkdir -p opencv/build && \
 
 # Runtime stage
 FROM python:3.11-slim
+
+# Copy the installed OpenCV libraries and Python bindings
+COPY --from=builder /usr/local /usr/local
+
+# Where is the cv2 dynamic library file
+RUN find /usr/local -name "cv2*.so"
+
+# OpenCV installe souvent dans cv2/python-3.11/
+# Il faut ajuster le PYTHONPATH pour trouver le fichier cv2*.so
+ENV PYTHONPATH="/usr/local/lib/python3.11/site-packages/cv2/python-3.11${PYTHONPATH:+:$PYTHONPATH}"
 
 # Install runtime Qt5 and GUI libraries
 RUN apt-get update && apt-get install -y \
@@ -79,9 +78,6 @@ RUN apt-get update && apt-get install -y \
     libqt5opengl5 \
     libqt5widgets5 \
     && rm -rf /var/lib/apt/lists/*
-
-# Copy the installed OpenCV libraries and Python bindings
-COPY --from=builder /opt/opencv/install /usr/local
 
 # Update the library cache
 RUN ldconfig
@@ -132,9 +128,6 @@ RUN pip install --no-cache-dir \
 # Configuration pour Wayland
 #ENV QT_QPA_PLATFORM=wayland  # pas si l'on veut l'utiliser avec X11
 ENV XDG_RUNTIME_DIR=/tmp/runtime-dir
-
-# Pointer le PYTHONPATH pour trouver le fichier cv2*.so
-ENV PYTHONPATH=/usr/local/python3.11/site-packages:$PYTHONPATH
 
 WORKDIR /app
 
