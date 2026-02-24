@@ -1,5 +1,5 @@
 # Build stage
-FROM python:3.11-slim AS builder
+FROM python:3.13-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential cmake git pkg-config libgtk-3-dev \
@@ -29,7 +29,7 @@ RUN mkdir -p opencv/build && \
           -D OPENCV_EXTRA_MODULES_PATH=/opt/opencv/opencv_contrib/modules \
           -D PYTHON3_EXECUTABLE=$(which python3) \
           -D PYTHON3_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
-          -D PYTHON3_PACKAGES_PATH=/usr/local/lib/python3.11/site-packages \
+          -D PYTHON3_PACKAGES_PATH=/usr/local/lib/python3.13/site-packages \
           -D BUILD_opencv_python3=ON \
           -D WITH_QT=ON \
           -D WITH_OPENGL=ON \
@@ -45,7 +45,7 @@ RUN mkdir -p opencv/build && \
     make install
 
 # Runtime stage
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # Copy the installed OpenCV libraries and Python bindings
 COPY --from=builder /usr/local /usr/local
@@ -53,7 +53,7 @@ COPY --from=builder /usr/local /usr/local
 # Where is the cv2 dynamic library file
 RUN find /usr/local -name "cv2*.so"
 
-# OpenCV installe souvent dans cv2/python-3.11/
+# OpenCV installe souvent dans cv2/python-3.13/
 # Il faut ajuster le PYTHONPATH pour trouver le fichier cv2*.so
 ENV PYTHONPATH="/usr/local/lib/python3.13/site-packages/cv2/python-3.13:/usr/lib/python3/dist-packages${PYTHONPATH:+:$PYTHONPATH}"
 
