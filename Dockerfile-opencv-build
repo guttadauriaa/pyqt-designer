@@ -55,7 +55,7 @@ RUN find /usr/local -name "cv2*.so"
 
 # OpenCV installe souvent dans cv2/python-3.11/
 # Il faut ajuster le PYTHONPATH pour trouver le fichier cv2*.so
-ENV PYTHONPATH="/usr/local/lib/python3.11/site-packages/cv2/python-3.11${PYTHONPATH:+:$PYTHONPATH}"
+ENV PYTHONPATH="/usr/local/lib/python3.13/site-packages/cv2/python-3.13:/usr/lib/python3/dist-packages${PYTHONPATH:+:$PYTHONPATH}"
 
 # Install runtime Qt5 and GUI libraries
 RUN apt-get update && apt-get install -y \
@@ -111,14 +111,14 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxext6 \
     libxrender-dev \
+    python3-pyqt5 \
+    python3-pyqt5.sip \
     && rm -rf /var/lib/apt/lists/*
 
 RUN ldconfig
 
 # Installation des bibliothèques Python scientifiques
 RUN pip install --no-cache-dir \
-    PyQt5 \
-    pyqt5-tools \
     matplotlib \
     numpy \
     scipy \
