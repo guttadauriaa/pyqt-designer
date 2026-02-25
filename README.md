@@ -9,7 +9,7 @@ Au choix :
 ```bash
 $ docker build . -t pyqt-designer
 $ docker build -f Dockerfile-cv2 -t pyqt-designer:pyqt5-cv2
-$ docker build -f Dockerfile-opencv-build -t pyqt-designer:pyqt5-opencv-4_10
+$ docker build -f Dockerfile-opencv-build -t pyqt-designer:3.13-slim-pyqt5-opencv-4.10
 ```
 
 ## Récupération sur Docker Hub
