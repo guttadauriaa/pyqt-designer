@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- Configuration ---
-IMAGE_NAME="adrianux2/pyqt-designer:pyqt5-opencv-4_10"
+IMAGE_NAME="adrianux2/pyqt-designer:3.13-slim-pyqt5-opencv-4.10"
 CONTAINER_HOME="/home/$USER"
 LOCAL_DIR="$(pwd)"
 
