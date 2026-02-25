@@ -69,6 +69,9 @@ else
     exit 1
 fi
 
+echo "Commande exécutée :"
+echo "docker run ${DOCKER_ARGS[*]} $IMAGE_NAME $@"
+
 # --- Lancement ---
 echo "Lancement du conteneur..."
 docker run "${DOCKER_ARGS[@]}" "$IMAGE_NAME" "$@"
